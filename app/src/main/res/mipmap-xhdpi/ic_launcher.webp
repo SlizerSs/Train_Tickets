@@ -1,0 +1,39 @@
+<root>
+    <item name='java.util.stream.BaseStream S onClose(java.lang.Runnable)'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.stream.BaseStream S parallel()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.stream.BaseStream S sequential()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.stream.BaseStream S unordered()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.stream.BaseStream java.util.Iterator&lt;T&gt; iterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+    <item name='java.util.stream.BaseStream java.util.Spliterator&lt;T&gt; spliterator()'>
+        <annotation name='org.jetbrains.annotations.NotNull'/>
+    </item>
+  <item
+      name='java.util.stream.DoubleStream java.util.stream.DoubleStream concat(java.util.stream.DoubleStream, java.util.stream.DoubleStream)'>
+    <annotation name='org.jetbrains.annotations.Contract'>
+      <val name="pure" val="true"/>
+    </annotation>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='java.util.stream.DoubleStream java.util.stream.DoubleStream concat(java.util.stream.DoubleStream, java.util.stream.DoubleStream) 0'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item
+      name='java.util.stream.DoubleStream java.util.stream.DoubleStream concat(java.util.stream.DoubleStream, java.util.stream.DoubleStream) 1'>
+    <annotation name='org.jetbrains.annotations.NotNull'/>
+  </item>
+  <item name='java.util.stream.DoubleStream java.util.stream.DoubleStream empty()'>
+    <annotation name='org.jetbrains.annotations.Contract'>
+      <val name="pure" val="true"/>
+    </annotation>
+    <annotation name='org.jetbrains.a

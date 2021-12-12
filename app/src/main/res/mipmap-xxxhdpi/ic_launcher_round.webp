@@ -1,0 +1,180 @@
+/*
+ * Copyright (c) 2000, 2003, Oracle and/or its affiliates. All rights reserved.
+ * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
+ *
+ * This code is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License version 2 only, as
+ * published by the Free Software Foundation.  Oracle designates this
+ * particular file as subject to the "Classpath" exception as provided
+ * by Oracle in the LICENSE file that accompanied this code.
+ *
+ * This code is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
+ * version 2 for more details (a copy is included in the LICENSE file that
+ * accompanied this code).
+ *
+ * You should have received a copy of the GNU General Public License version
+ * 2 along with this work; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
+ *
+ * Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
+ * or visit www.oracle.com if you need additional information or have any
+ * questions.
+ */
+
+package com.sun.corba.se.impl.dynamicany;
+
+import org.omg.CORBA.Any;
+import org.omg.CORBA.TypeCode;
+import org.omg.CORBA.TCKind;
+import org.omg.CORBA.portable.OutputStream;
+//import org.omg.CORBA.ORBPackage.*;
+import org.omg.CORBA.TypeCodePackage.BadKind;
+import org.omg.CORBA.TypeCodePackage.Bounds;
+import org.omg.CORBA.portable.InputStream;
+import org.omg.DynamicAny.*;
+import org.omg.DynamicAny.DynAnyPackage.TypeMismatch;
+import org.omg.DynamicAny.DynAnyFactoryPackage.InconsistentTypeCode;
+import java.math.BigDecimal;
+import com.sun.corba.se.impl.corba.AnyImpl;
+
+import com.sun.corba.se.spi.orb.ORB ;
+import com.sun.corba.se.spi.logging.CORBALogDomains ;
+import com.sun.corba.se.impl.logging.ORBUtilSystemException ;
+
+public class DynAnyUtil
+{
+    static boolean isConsistentType(TypeCode typeCode) {
+        int kind = typeCode.kind().value();
+        return (kind != TCKind._tk_Principal &&
+                kind != TCKind._tk_native &&
+                kind != TCKind._tk_abstract_interface);
+    }
+
+    static boolean isConstructedDynAny(DynAny dynAny) {
+        // DynFixed is constructed but not a subclass of DynAnyConstructedImpl
+        //return (dynAny instanceof DynAnyConstructedImpl);
+        int kind = dynAny.type().kind().value();
+        return (kind == TCKind._tk_sequence ||
+                kind == TCKind._tk_struct ||
+                kind == TCKind._tk_array ||
+                kind == TCKind._tk_union ||
+                kind == TCKind._tk_enum ||
+                kind == TCKind._tk_fixed ||
+                kind == TCKind._tk_value ||
+                kind == TCKind._tk_value_box);
+    }
+
+    static DynAny createMostDerivedDynAny(Any any, ORB orb, boolean copyValue)
+        throws org.omg.DynamicAny.DynAnyFactoryPackage.InconsistentTypeCode
+    {
+        if (any == null || ! DynAnyUtil.isConsistentType(any.type()))
+            throw new org.omg.DynamicAny.DynAnyFactoryPackage.InconsistentTypeCode();
+
+        switch (any.type().kind().value()) {
+            case TCKind._tk_sequence:
+                return new DynSequenceImpl(orb, any, copyValue);
+            case TCKind._tk_struct:
+                return new DynStructImpl(orb, any, copyValue);
+            case TCKind._tk_array:
+                return new DynArrayImpl(orb, any, copyValue);
+            case TCKind._tk_union:
+                return new DynUnionImpl(orb, any, copyValue);
+            case TCKind._tk_enum:
+                return new DynEnumImpl(orb, any, copyValue);
+            case TCKind._tk_fixed:
+                return new DynFixedImpl(orb, any, copyValue);
+            case TCKind._tk_value:
+                return new DynValueImpl(orb, any, copyValue);
+            case TCKind._tk_value_box:
+                return new DynValueBoxImpl(orb, any, copyValue);
+            default:
+                return new DynAnyBasicImpl(orb, any, copyValue);
+        }
+    }
+
+    static DynAny createMostDerivedDynAny(TypeCode typeCode, ORB orb)
+        throws org.omg.DynamicAny.DynAnyFactoryPackage.InconsistentTypeCode
+    {
+        if (typeCode == null || ! DynAnyUtil.isConsistentType(typeCode))
+            throw new org.omg.DynamicAny.DynAnyFactoryPackage.InconsistentTypeCode();
+
+        switch (typeCode.kind().value()) {
+            case TCKind._tk_sequence:
+                return new DynSequenceImpl(orb, typeCode);
+            case TCKind._tk_struct:
+                return new DynStructImpl(orb, typeCode);
+            case TCKind._tk_array:
+                return new DynArrayImpl(orb, typeCode);
+            case TCKind._tk_union:
+                return new DynUnionImpl(orb, typeCode);
+            case TCKind._tk_enum:
+                return new DynEnumImpl(orb, typeCode);
+            case TCKind._tk_fixed:
+                return new DynFixedImpl(orb, typeCode);
+            case TCKind._tk_value:
+                return new DynValueImpl(orb, typeCode);
+            case TCKind._tk_value_box:
+                return new DynValueBoxImpl(orb, typeCode);
+            default:
+                return new DynAnyBasicImpl(orb, typeCode);
+        }
+    }
+
+    // Extracts a member value according to the given TypeCode from the given complex Any
+    // (at the Anys current internal stream position, consuming the anys stream on the way)
+    // and returns it wrapped into a new Any
+/*
+    static Any extractAnyFromAny(TypeCode memberType, Any any, ORB orb) {
+        // Moved this functionality into AnyImpl because it is needed for Any.equal()
+        return ((AnyImpl)any).extractAny(memberType, orb);
+    }
+*/
+
+    // Extracts a member value according to the given TypeCode from the given complex Any
+    // (at the Anys current internal stream position, consuming the anys stream on the way)
+    // and returns it wrapped into a new Any
+    static Any extractAnyFromStream(TypeCode memberType, InputStream input, ORB orb) {
+        return AnyImpl.extractAnyFromStream(memberType, input, orb);
+    }
+
+    // Creates a default Any of the given type.
+    static Any createDefaultAnyOfType(TypeCode typeCode, ORB orb) {
+        ORBUtilSystemException wrapper = ORBUtilSystemException.get( orb,
+            CORBALogDomains.RPC_PRESENTATION ) ;
+
+        Any returnValue = orb.create_any();
+        // The spec for DynAny differs from Any on initialization via type code:
+        // - false for boolean
+        // - zero for numeric types
+        // - zero for types octet, char, and wchar
+        // - the empty string for string and wstring
+        // - nil for object references
+        // - a type code with a TCKind value of tk_null for type codes
+        // - for Any values, an Any containing a type code with a TCKind value of tk_null
+        //   type and no value
+        switch (typeCode.kind().value()) {
+            case TCKind._tk_boolean:
+                // false for boolean
+                returnValue.insert_boolean(false);
+                break;
+            case TCKind._tk_short:
+                // zero for numeric types
+                returnValue.insert_short((short)0);
+                break;
+            case TCKind._tk_ushort:
+                // zero for numeric types
+                returnValue.insert_ushort((short)0);
+                break;
+            case TCKind._tk_long:
+                // zero for numeric types
+                returnValue.insert_long(0);
+                break;
+            case TCKind._tk_ulong:
+                // zero for numeric types
+                returnValue.insert_ulong(0);
+                break;
+            case TCKind._tk_longlong:
+                // zero for numeric types
+                re
