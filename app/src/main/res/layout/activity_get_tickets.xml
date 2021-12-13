@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#A8C0CE"
+    android:backgroundTint="#A8C0CE"
     tools:context=".GetTicketsActivity">
     <CalendarView
         android:id="@+id/calendarView"

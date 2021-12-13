@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -16,12 +17,22 @@ import android.view.View;
 import android.widget.CalendarView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.train_tickets.Database.DbHelper;
 import com.example.train_tickets.Database.TicketDB;
 import com.example.train_tickets.Model.Ticket;
 import com.example.train_tickets.Model.User;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 public class GetTicketsActivity extends AppCompatActivity {
@@ -34,6 +45,11 @@ public class GetTicketsActivity extends AppCompatActivity {
     ArrayList<Ticket> tempTickets;
     ArrayList<Ticket> tickets = new ArrayList<>();
     User user;
+
+    String apikey = "AIzaSyDWXDR4M45mLketuuMNAXOSF5t4uYL6hIE";
+    String city = "Minsk";
+    String readyurl = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apikey+"&units=metric&lang=ru";
+    String currentTemperature;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,7 +60,7 @@ public class GetTicketsActivity extends AppCompatActivity {
         db = dbHelper.getReadableDatabase();
         user = JSONHelper.importFromJSONExternal(this).get(0);
         tempTickets = new ArrayList<>();
-
+        currentTemperature = "-2";
         userCursor = db.rawQuery("select * from TICKET where IDUSER is NULL", null);
         userCursor.moveToFirst();
         while (!userCursor.isAfterLast()) {
@@ -84,7 +100,7 @@ public class GetTicketsActivity extends AppCompatActivity {
                 int mDay = dayOfMonth;
                 String selectedDate = new StringBuilder().append(mDay).append(".").append(mMonth + 1).append(".").append(mYear).toString();
 
-
+                tempTickets = new ArrayList<>();
                 for (Ticket t : tickets) {
                     if(t.getDate().equals(selectedDate))
                         tempTickets.add(t);
@@ -131,7 +147,72 @@ public class GetTicketsActivity extends AppCompatActivity {
                 Intent intent3 = new Intent(this, LoginActivity.class);
                 startActivity(intent3);
                 return true;
+            case R.id.getTime:
+                try {
+                    new GetURLData().execute(readyurl);
+                    Toast toast = Toast.makeText(getApplicationContext(), currentTemperature,Toast.LENGTH_SHORT);
+                    toast.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+    private class GetURLData extends AsyncTask<String, String, String> {
+
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            HttpURLConnection connection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(strings[0]);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.connect();
+                InputStream stream = connection.getInputStream();
+                reader = new BufferedReader(new InputStreamReader(stream));
+                StringBuffer buffer = new StringBuffer();
+                String line = "";
+                while ((line = reader.readLine()) != null)
+                    buffer.append(line).append("\n");
+
+                return buffer.toString();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (connection != null)
+                    connection.disconnect();
+
+                try {
+                    if (reader != null) {
+                        reader.close();
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                Toast toast = Toast.makeText(getApplicationContext(),
+                        "В " + jsonObject.getString("name") + "е " + jsonObject.getJSONObject("main").getDouble("temp") +
+                                " и " + jsonObject.getJSONArray("weather").getJSONObject(0).getString("description"),
+                        Toast.LENGTH_SHORT);
+                toast.show();
+            } catch (Exception e) {
+
+            }
+        }
     }
 }
