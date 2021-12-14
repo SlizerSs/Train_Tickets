@@ -3,8 +3,7 @@
     android:id="@+id/activity_authentication"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A8C0CE"
-    android:backgroundTint="#A8C0CE">
+    android:background="@color/white_bg">
 
 
     <EditText
@@ -13,9 +12,8 @@
         android:layout_height="50dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="145dp"
-        android:backgroundTint="#000000"
         android:hint="Логин"
-        android:textSize="30dp" />
+        android:textSize="20dp" />
 
     <EditText
         android:id="@+id/et_password"
@@ -24,9 +22,8 @@
         android:layout_below="@+id/et_login"
         android:layout_centerHorizontal="true"
         android:hint="Пароль"
-        android:backgroundTint="#000000"
         android:inputType="textPassword"
-        android:textSize="30dp" />
+        android:textSize="20dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -40,7 +37,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="#58555A"
             android:onClick="Authorization"
             android:text="Авторизация" />
 
@@ -49,7 +45,6 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:backgroundTint="#58555A"
             android:onClick="Registration"
             android:text="Регистрация" />
 

@@ -4,14 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A8C0CE"
-    android:backgroundTint="#A8C0CE"
+    android:background="@color/white_bg"
     tools:context=".MainActivity">
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Мои билеты"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:textSize="24dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         />

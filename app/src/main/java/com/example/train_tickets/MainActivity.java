@@ -39,12 +39,12 @@ public class MainActivity extends AppCompatActivity {
     Cursor userCursor;
     SimpleCursorAdapter userAdapter;
 
-    String currentTemperature;
     ArrayList<Ticket> tickets = new ArrayList<>();
     TextView textView;
     User user;
 
-    String apikey = "AIzaSyDWXDR4M45mLketuuMNAXOSF5t4uYL6hIE";
+    String apikey = "fedc36ed7df3300b6db8c1a6a622740b";
+    //погода
     String city = "Minsk";
     String readyurl = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apikey+"&units=metric&lang=ru";
     @Override
@@ -74,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         }
         TicketAdapter ticketAdapter = new TicketAdapter(tickets);
         ticketsList.setAdapter(ticketAdapter);
-        currentTemperature = "-2";
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -100,8 +99,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.getTime:
                 try {
                     new GetURLData().execute(readyurl);
-                    Toast toast = Toast.makeText(getApplicationContext(), currentTemperature,Toast.LENGTH_SHORT);
-                    toast.show();
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -118,7 +116,8 @@ public class MainActivity extends AppCompatActivity {
     }
     private class GetURLData extends AsyncTask<String, String, String> {
 
-        protected void onPreExecute() {
+
+        protected void onPreExecute(){
             super.onPreExecute();
         }
 
@@ -134,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 reader = new BufferedReader(new InputStreamReader(stream));
                 StringBuffer buffer = new StringBuffer();
                 String line = "";
-                while ((line = reader.readLine()) != null)
+                while ((line=reader.readLine()) != null)
                     buffer.append(line).append("\n");
 
                 return buffer.toString();
@@ -143,14 +142,14 @@ public class MainActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                if (connection != null)
+                if(connection != null)
                     connection.disconnect();
 
                 try {
                     if (reader != null) {
                         reader.close();
                     }
-                } catch (IOException e) {
+                }catch (IOException e) {
                     e.printStackTrace();
                 }
             }
@@ -158,16 +157,13 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(String result){
             super.onPostExecute(result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                Toast toast = Toast.makeText(getApplicationContext(),
-                        "В " + jsonObject.getString("name") + "е " + jsonObject.getJSONObject("main").getDouble("temp") +
-                                " и " + jsonObject.getJSONArray("weather").getJSONObject(0).getString("description"),
-                        Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), jsonObject.getString("name") + " " + jsonObject.getJSONObject("main").getDouble("temp") + " " + jsonObject.getJSONArray("weather").getJSONObject(0).getString("description"),Toast.LENGTH_SHORT);
                 toast.show();
-            } catch (Exception e) {
+            } catch(Exception e) {
 
             }
         }

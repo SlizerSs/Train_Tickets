@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#A8C0CE"
-    android:backgroundTint="#A8C0CE"
+    android:background="@color/white_bg"
     android:paddingLeft="30px"
     android:paddingRight="30px">
 
@@ -23,7 +22,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:backgroundTint="#58555A"
             android:onClick="ChoosePhoto"
             android:text="Выбрать"
             android:textAlignment="center" />
@@ -68,7 +66,6 @@
         android:layout_width="344dp"
         android:layout_height="wrap_content"
         android:layout_span="2"
-        android:backgroundTint="#58555A"
         android:onClick="Register"
         android:text="Зарегистрироваться"
         android:textAlignment="center" />
