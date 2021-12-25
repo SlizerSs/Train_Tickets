@@ -34,6 +34,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class GetTicketsActivity extends AppCompatActivity {
     RecyclerView ticketsList;
@@ -49,7 +51,7 @@ public class GetTicketsActivity extends AppCompatActivity {
     String apikey = "fedc36ed7df3300b6db8c1a6a622740b";
     //погода
     String city = "Minsk";
-    String readyurl = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apikey+"&units=metric&lang=ru";
+    String readyurl = "https://evilinsult.com/generate_insult.php?lang=en&type=json";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,7 +152,9 @@ public class GetTicketsActivity extends AppCompatActivity {
             case R.id.getTime:
                 try {
                     new GetURLData().execute(readyurl);
-
+                   /* Date currentTime = Calendar.getInstance().getTime();
+                    Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(currentTime),Toast.LENGTH_SHORT);
+                    toast.show();*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -205,7 +209,7 @@ public class GetTicketsActivity extends AppCompatActivity {
             super.onPostExecute(result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                Toast toast = Toast.makeText(getApplicationContext(), jsonObject.getString("name") + " " + jsonObject.getJSONObject("main").getDouble("temp") + " " + jsonObject.getJSONArray("weather").getJSONObject(0).getString("description"),Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), jsonObject.getString("insult"),Toast.LENGTH_SHORT);
                 toast.show();
             } catch(Exception e) {
 

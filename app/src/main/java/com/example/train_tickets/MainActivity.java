@@ -12,9 +12,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import java.util.Calendar;
 
 import com.example.train_tickets.Database.DbHelper;
 import com.example.train_tickets.Model.Ticket;
@@ -30,6 +32,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -39,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
     Cursor userCursor;
     SimpleCursorAdapter userAdapter;
 
+
+
     ArrayList<Ticket> tickets = new ArrayList<>();
     TextView textView;
     User user;
@@ -46,7 +51,8 @@ public class MainActivity extends AppCompatActivity {
     String apikey = "fedc36ed7df3300b6db8c1a6a622740b";
     //погода
     String city = "Minsk";
-    String readyurl = "https://api.openweathermap.org/data/2.5/weather?q="+city+"&appid="+apikey+"&units=metric&lang=ru";
+    String readyurl = "http://worldtimeapi.org/api/timezone/Europe/Minsk";
+    //String readyurl = "https://evilinsult.com/generate_insult.php?lang=en&type=json";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,6 +86,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -98,8 +105,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             case R.id.getTime:
                 try {
+                    //readyurl = "";
                     new GetURLData().execute(readyurl);
-
+                   /* Date currentTime = Calendar.getInstance().getTime();
+                    Toast toast = Toast.makeText(getApplicationContext(), String.valueOf(currentTime),Toast.LENGTH_SHORT);
+                    toast.show();*/
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -161,7 +171,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
             try {
                 JSONObject jsonObject = new JSONObject(result);
-                Toast toast = Toast.makeText(getApplicationContext(), jsonObject.getString("name") + " " + jsonObject.getJSONObject("main").getDouble("temp") + " " + jsonObject.getJSONArray("weather").getJSONObject(0).getString("description"),Toast.LENGTH_SHORT);
+                Toast toast = Toast.makeText(getApplicationContext(), jsonObject.getString("datetime"),Toast.LENGTH_SHORT);
                 toast.show();
             } catch(Exception e) {
 

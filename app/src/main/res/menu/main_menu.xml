@@ -15,5 +15,5 @@
     <item
         android:id="@+id/getTime"
         android:orderInCategory="4"
-        android:title="Температура" />
+        android:title="Оскорбление" />
 </menu>
